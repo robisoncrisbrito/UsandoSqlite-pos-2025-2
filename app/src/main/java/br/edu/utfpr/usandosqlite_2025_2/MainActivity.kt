@@ -1,7 +1,6 @@
 package br.edu.utfpr.usandosqlite_2025_2
 
 import android.content.ContentValues
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.View
@@ -10,12 +9,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import br.edu.utfpr.usandosqlite_2025_2.database.DatabaseHandler
 import br.edu.utfpr.usandosqlite_2025_2.databinding.ActivityMainBinding
+import br.edu.utfpr.usandosqlite_2025_2.entity.Cadastro
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var banco: SQLiteDatabase
+    private lateinit var banco: DatabaseHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,13 +25,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        banco = openOrCreateDatabase(
-            "bdfile.sqlite", MODE_PRIVATE,
-            null
-        )
-
-        banco.execSQL( "CREATE TABLE IF NOT EXISTS cadastro (_id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, telefone TEXT )" )
-
+        banco = DatabaseHandler(this)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -41,12 +36,18 @@ class MainActivity : AppCompatActivity() {
 
     fun btIncluirOnClick(view: View) {
 
-        val registro = ContentValues()
-        registro.put("nome", binding.etNome.text.toString())
-        registro.put("telefone", binding.etTelefone.text.toString())
+        //validação dos campos de tela
 
-        banco.insert( "cadastro", null, registro)
+        val cadastro = Cadastro(
+            0,
+            binding.etNome.text.toString(),
+            binding.etTelefone.text.toString()
+        )
 
+        //acesso ao banco
+        banco.inserir(cadastro)
+
+        //apresentação da devolutiva visual para o usuário
         Toast.makeText(
             this,
             "Inclusão efetuada com Sucesso.",
@@ -55,12 +56,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun btAlterarOnClick(view: View) {
-        val registro = ContentValues()
-        registro.put("nome", binding.etNome.text.toString())
-        registro.put("telefone", binding.etTelefone.text.toString())
 
-        banco.update( "cadastro", registro, "_id = ${binding.etCod.text.toString()}", null )
+        //validação dos campos de tela
 
+        //acesso ao banco
+        val cadastro = Cadastro( binding.etCod.text.toString().toInt(),
+            binding.etNome.text.toString(),
+            binding.etTelefone.text.toString()
+        )
+
+        banco.alterar(cadastro)
+
+
+        //apresentação da devolutiva visual para o usuário
         Toast.makeText(
             this,
             "Alteração efetuada com Sucesso.",
@@ -68,8 +76,13 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
     fun btExcluirOnClick(view: View) {
-        banco.delete( "cadastro", "_id = ${binding.etCod.text.toString()}", null )
 
+        //validação dos campos de tela
+
+        //acesso ao banco
+        banco.excluir( binding.etCod.text.toString().toInt() )
+
+        //apresentação da devolutiva visual para o usuário
         Toast.makeText(
             this,
             "Exclusão efetuada com Sucesso.",
@@ -78,26 +91,16 @@ class MainActivity : AppCompatActivity() {
     }
     fun btPesquisarOnClick(view: View) {
 
-        val registro = banco.query(
-            "cadastro",
-            null,
-            "_id = ${binding.etCod.text.toString()}",
-            null,
-            null,
-            null,
-            null
-        )
+        //validação dos campos de tela
 
-        if ( registro.moveToNext() ) {
+        //acesso ao banco
+        val cadastro = banco.pesquisar( binding.etCod.text.toString().toInt() )
 
-            val nome = registro.getString(1 )
-            val telefone = registro.getString( 2 )
-
-            binding.etNome.setText( nome )
-            binding.etTelefone.setText( telefone )
-
+        //apresentação da devolutiva visual para o usuário
+        if ( cadastro != null ) {
+            binding.etNome.setText( cadastro.nome )
+            binding.etTelefone.setText( cadastro.telefone )
         } else {
-
             binding.etNome.setText( "" )
             binding.etTelefone.setText( "" )
 
@@ -107,21 +110,14 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-
-
     }
+
     fun btListarOnClick(view: View) {
 
-        val registros = banco.query(
-            "cadastro",
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        )
+        //acesso ao banco
+        val registros = banco.listar()
 
+        //apresentação da devolutiva visual para o usuário
         val saida = StringBuilder()
 
         while ( registros.moveToNext() ) {
@@ -129,7 +125,6 @@ class MainActivity : AppCompatActivity() {
             val telefone = registros.getString( 2 )
 
             saida.append( " ${nome} - ${telefone} \n " )
-
         }
 
         Toast.makeText(
