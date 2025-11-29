@@ -1,6 +1,7 @@
 package br.edu.utfpr.usandosqlite_2025_2
 
 import android.content.ContentValues
+import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.View
@@ -10,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import br.edu.utfpr.usandosqlite_2025_2.database.DatabaseHandler
+import br.edu.utfpr.usandosqlite_2025_2.database.DatabaseHandler.Companion.COLUMN_NOME
+import br.edu.utfpr.usandosqlite_2025_2.database.DatabaseHandler.Companion.COLUMN_TELEFONE
 import br.edu.utfpr.usandosqlite_2025_2.databinding.ActivityMainBinding
 import br.edu.utfpr.usandosqlite_2025_2.entity.Cadastro
 
@@ -113,26 +116,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun btListarOnClick(view: View) {
-
-        //acesso ao banco
-        val registros = banco.listar()
-
-        //apresentação da devolutiva visual para o usuário
-        val saida = StringBuilder()
-
-        while ( registros.moveToNext() ) {
-            val nome = registros.getString(1 )
-            val telefone = registros.getString( 2 )
-
-            saida.append( " ${nome} - ${telefone} \n " )
-        }
-
-        Toast.makeText(
-            this,
-            saida.toString(),
-            Toast.LENGTH_SHORT
-        ).show()
-
-
+        val intent = Intent( this, ListarActivity::class.java )
+        startActivity( intent )
     }
-}
+
+
+
+//        //acesso ao banco
+//        val registros = banco.listar()
+//
+//        //apresentação da devolutiva visual para o usuário
+//        val saida = StringBuilder()
+//
+//        while ( registros.moveToNext() ) {
+//            val nome = registros.getString(DatabaseHandler.COLUMN_NOME.toInt() )
+//            val telefone = registros.getString( DatabaseHandler.COLUMN_TELEFONE.toInt() )
+//
+//            saida.append( " ${nome} - ${telefone} \n " )
+//        }
+//
+//        Toast.makeText(
+//            this,
+//            saida.toString(),
+//            Toast.LENGTH_SHORT
+//        ).show()
+
+
+
+} //fim da MainActivity

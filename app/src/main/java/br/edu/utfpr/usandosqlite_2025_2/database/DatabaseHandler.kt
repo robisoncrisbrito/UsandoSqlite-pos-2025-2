@@ -5,7 +5,6 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.widget.Toast
 import br.edu.utfpr.usandosqlite_2025_2.entity.Cadastro
 
 class DatabaseHandler private constructor (context: Context) : SQLiteOpenHelper( context, DATABASE_NAME, null, DATABASE_VERSION ) {
@@ -15,8 +14,8 @@ class DatabaseHandler private constructor (context: Context) : SQLiteOpenHelper(
         const val DATABASE_NAME = "bdfile.sqlite"
         const val TABLE_NAME = "cadastro"
         const val COLUMN_ID = "0"
-        const val COLUMN_NOME = "0"
-        const val COLUMN_TELEFONE = "0"
+        const val COLUMN_NOME: String = "1"
+        const val COLUMN_TELEFONE: String = "2"
 
         @Volatile
         private var INSTANCE: DatabaseHandler? = null
