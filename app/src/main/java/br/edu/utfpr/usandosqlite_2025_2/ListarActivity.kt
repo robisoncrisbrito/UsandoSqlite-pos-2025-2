@@ -33,6 +33,11 @@ class ListarActivity : AppCompatActivity() {
             insets
         }
 
+
+    }
+
+    override fun onStart() {
+        super.onStart()
         initList()
     }
 
