@@ -52,44 +52,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun btIncluirOnClick(view: View) {
 
-        //validação dos campos de tela
-
-        val cadastro = Cadastro(
-            0,
-            binding.etNome.text.toString(),
-            binding.etTelefone.text.toString()
-        )
-
-        //acesso ao banco
-        banco.inserir(cadastro)
-
-        //apresentação da devolutiva visual para o usuário
-        Toast.makeText(
-            this,
-            "Inclusão efetuada com Sucesso.",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    fun btAlterarOnClick(view: View) {
+    fun btSalvarOnClick(view: View) {
 
         //validação dos campos de tela
 
         //acesso ao banco
-        val cadastro = Cadastro( binding.etCod.text.toString().toInt(),
-            binding.etNome.text.toString(),
-            binding.etTelefone.text.toString()
-        )
+        var msg = ""
 
-        banco.alterar(cadastro)
-
+        if ( binding.etCod.text.toString().isEmpty() ) {
+            val cadastro = Cadastro(
+                0,
+                binding.etNome.text.toString(),
+                binding.etTelefone.text.toString()
+            )
+            //acesso ao banco
+            banco.inserir(cadastro)
+            msg = "Inclusão efetuada com Sucesso."
+        } else {
+            val cadastro = Cadastro( binding.etCod.text.toString().toInt(),
+                binding.etNome.text.toString(),
+                binding.etTelefone.text.toString()
+            )
+            banco.alterar(cadastro)
+            msg = "Alteração efetuada com Sucesso."
+        }
 
         //apresentação da devolutiva visual para o usuário
         Toast.makeText(
             this,
-            "Alteração efetuada com Sucesso.",
+            msg,
             Toast.LENGTH_SHORT
         ).show()
     }
