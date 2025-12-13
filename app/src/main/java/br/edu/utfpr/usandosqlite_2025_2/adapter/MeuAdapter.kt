@@ -14,27 +14,25 @@ import br.edu.utfpr.usandosqlite_2025_2.R
 import br.edu.utfpr.usandosqlite_2025_2.database.DatabaseHandler
 import br.edu.utfpr.usandosqlite_2025_2.entity.Cadastro
 
-class MeuAdapter(val context: Context, val cursor: Cursor): BaseAdapter() {
+class MeuAdapter(val context: Context, val registros: List<Cadastro>): BaseAdapter() {
 
     override fun getCount(): Int {
-        return cursor.count
+        return registros.size
     }
 
     override fun getItem(pos: Int): Any? {
-        cursor.moveToPosition(pos)
 
         val cadastro = Cadastro(
-            cursor.getInt(DatabaseHandler.COLUMN_ID.toInt() ),
-            cursor.getString(DatabaseHandler.COLUMN_NOME.toInt() ),
-            cursor.getString(DatabaseHandler.COLUMN_TELEFONE.toInt() )
+            registros.get(pos)._id,
+            registros.get(pos).nome,
+            registros.get(pos).telefone
         )
 
         return cadastro
     }
 
     override fun getItemId(pos: Int): Long {
-        cursor.moveToPosition(pos)
-        return cursor.getInt(DatabaseHandler.COLUMN_ID.toInt() ).toLong()
+        return registros.get(pos)._id.toInt().toLong()
     }
 
     override fun getView(
@@ -52,19 +50,15 @@ class MeuAdapter(val context: Context, val cursor: Cursor): BaseAdapter() {
         val tvTelefoneElementoLista = v.findViewById<TextView>(R.id.tvTelefoneElementoLista)
         val btEditarElementoLista = v.findViewById<ImageButton>(R.id.btEditarElementoLista )
 
-        cursor.moveToPosition(pos)
-
-        tvNomeElementoLista.text = cursor.getString(DatabaseHandler.COLUMN_NOME.toInt() )
-        tvTelefoneElementoLista.text = cursor.getString(DatabaseHandler.COLUMN_TELEFONE.toInt() )
+        tvNomeElementoLista.text = registros.get(pos).nome
+        tvTelefoneElementoLista.text = registros.get(pos).telefone
 
         btEditarElementoLista.setOnClickListener {
             val intent = Intent(context, MainActivity::class.java)
 
-            cursor.moveToPosition(pos)
-
-            intent.putExtra("cod", cursor.getInt(DatabaseHandler.COLUMN_ID.toInt()))
-            intent.putExtra("nome", cursor.getString(DatabaseHandler.COLUMN_NOME.toInt()))
-            intent.putExtra( "telefone", cursor.getString(DatabaseHandler.COLUMN_TELEFONE.toInt()))
+            intent.putExtra("cod", registros.get(pos)._id)
+            intent.putExtra("nome", registros.get(pos).nome)
+            intent.putExtra( "telefone", registros.get(pos).telefone)
 
             context.startActivity(intent)
         }
