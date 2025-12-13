@@ -27,10 +27,11 @@ class DatabaseHandler private constructor (context: Context) : SQLiteOpenHelper(
             return INSTANCE as DatabaseHandler
 
         }
+
     }
 
     override fun onCreate(banco: SQLiteDatabase?) {
-        banco?.execSQL( "CREATE TABLE IF NOT EXISTS $TABLE_NAME (_id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, telefone TEXT, email TEXT )" )
+        banco?.execSQL( "CREATE TABLE IF NOT EXISTS $TABLE_NAME (_id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, telefone TEXT )" )
     }
 
     override fun onUpgrade(

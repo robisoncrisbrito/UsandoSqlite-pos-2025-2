@@ -14,7 +14,6 @@ import br.edu.utfpr.usandosqlite_2025_2.databinding.ActivityListarBinding
 class ListarActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListarBinding
-
     private lateinit var banco: DatabaseHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
