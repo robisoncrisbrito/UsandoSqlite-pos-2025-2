@@ -5,8 +5,10 @@ import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -113,22 +115,45 @@ class MainActivity : AppCompatActivity() {
         //validação dos campos de tela
 
         //acesso ao banco
-        val cadastro = banco.pesquisar( binding.etCod.text.toString().toInt() )
 
-        //apresentação da devolutiva visual para o usuário
-        if ( cadastro != null ) {
-            binding.etNome.setText( cadastro.nome )
-            binding.etTelefone.setText( cadastro.telefone )
-        } else {
-            binding.etNome.setText( "" )
-            binding.etTelefone.setText( "" )
+        val etCodPesquisar = EditText(this)
 
-            Toast.makeText(
-                this,
-                "Registro não encontro.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+        val builder = AlertDialog.Builder( this )
+        builder.setTitle("Digite o Código")
+        builder.setView(etCodPesquisar)
+        builder.setCancelable(false)
+        builder.setNegativeButton(
+            "Fechar",
+            null
+        )
+
+        builder.setPositiveButton(
+            "Pesquisar",
+            { dialog, which ->
+                val cadastro = banco.pesquisar( etCodPesquisar.text.toString().toInt() )
+
+                if ( cadastro != null ) {
+                    binding.etCod.setText( etCodPesquisar.text.toString() )
+                    binding.etNome.setText( cadastro.nome )
+                    binding.etTelefone.setText( cadastro.telefone )
+                } else {
+                    binding.etNome.setText( "" )
+                    binding.etTelefone.setText( "" )
+
+                    Toast.makeText(
+                        this,
+                        "Registro não encontro.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        )
+
+        builder.show()
+
+
+
+
     }
 
     fun btListarOnClick(view: View) {
