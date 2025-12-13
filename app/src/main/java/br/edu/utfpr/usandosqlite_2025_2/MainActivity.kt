@@ -1,8 +1,6 @@
 package br.edu.utfpr.usandosqlite_2025_2
 
-import android.content.ContentValues
 import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -13,17 +11,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import br.edu.utfpr.usandosqlite_2025_2.database.DatabaseHandler
-import br.edu.utfpr.usandosqlite_2025_2.database.DatabaseHandler.Companion.COLUMN_NOME
-import br.edu.utfpr.usandosqlite_2025_2.database.DatabaseHandler.Companion.COLUMN_TELEFONE
 import br.edu.utfpr.usandosqlite_2025_2.databinding.ActivityMainBinding
 import br.edu.utfpr.usandosqlite_2025_2.entity.Cadastro
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var banco: DatabaseHandler
 
-
+    val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,9 +58,27 @@ class MainActivity : AppCompatActivity() {
 
     fun btSalvarOnClick(view: View) {
 
+        val cadastro = Cadastro(
+            binding.etCod.text.toString().toInt(),
+            binding.etNome.text.toString(),
+            binding.etTelefone.text.toString()
+        )
+
+        db.collection("cadastro")
+            .document(binding.etCod.text.toString())
+            .set(cadastro)
+            .addOnSuccessListener {
+                Toast.makeText( this, "Inclusão Efetuada com sucesso", Toast.LENGTH_SHORT ).show()
+
+            }
+            .addOnFailureListener { e->
+                Toast.makeText( this, "Erro: ${e.message}" , Toast.LENGTH_SHORT ).show()
+            }
+
         //validação dos campos de tela
 
         //acesso ao banco
+/*
         var msg = ""
 
         if ( binding.etCod.text.toString().isEmpty() ) {
@@ -89,6 +105,7 @@ class MainActivity : AppCompatActivity() {
             msg,
             Toast.LENGTH_SHORT
         ).show()
+*/
 
         finish()
     }
@@ -112,10 +129,32 @@ class MainActivity : AppCompatActivity() {
 
     fun btPesquisarOnClick(view: View) {
 
+        val msg = StringBuilder()
+
+        db.collection( "cadastro" )
+            .get()
+            .addOnSuccessListener { result ->
+                val registros = result.toString()
+
+                for (document in result) {
+                    // Obtém os dados de cada documento                    val nome = document.getString("nome") ?: ""
+                    val registro = document.getString( "nome" )
+
+                    msg.append(registro + "\n" )
+
+                }
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e->
+                Toast.makeText(this, "Erro: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+
+
         //validação dos campos de tela
 
         //acesso ao banco
 
+/*
         val etCodPesquisar = EditText(this)
 
         val builder = AlertDialog.Builder( this )
@@ -150,6 +189,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         builder.show()
+*/
 
 
 

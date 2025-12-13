@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="br.edu.utfpr.usandosqlite_2025_2" />
+                  <option name="mobileSdkAppId" value="1:257639648918:android:8fd98991d45a1cb697bcb7" />
+                  <option name="projectId" value="testeturma-354b8ss" />
+                  <option name="projectNumber" value="257639648918" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
