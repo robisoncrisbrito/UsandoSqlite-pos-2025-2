@@ -1,12 +1,15 @@
 package br.edu.utfpr.usandosqlite_2025_2.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageButton
 import android.widget.TextView
+import br.edu.utfpr.usandosqlite_2025_2.MainActivity
 import br.edu.utfpr.usandosqlite_2025_2.R
 import br.edu.utfpr.usandosqlite_2025_2.database.DatabaseHandler
 import br.edu.utfpr.usandosqlite_2025_2.entity.Cadastro
@@ -47,11 +50,24 @@ class MeuAdapter(val context: Context, val cursor: Cursor): BaseAdapter() {
         //recupera os componentes visuais da tela
         val tvNomeElementoLista = v.findViewById<TextView>(R.id.tvNomeElementoLista)
         val tvTelefoneElementoLista = v.findViewById<TextView>(R.id.tvTelefoneElementoLista)
+        val btEditarElementoLista = v.findViewById<ImageButton>(R.id.btEditarElementoLista )
 
         cursor.moveToPosition(pos)
 
         tvNomeElementoLista.text = cursor.getString(DatabaseHandler.COLUMN_NOME.toInt() )
         tvTelefoneElementoLista.text = cursor.getString(DatabaseHandler.COLUMN_TELEFONE.toInt() )
+
+        btEditarElementoLista.setOnClickListener {
+            val intent = Intent(context, MainActivity::class.java)
+
+            cursor.moveToPosition(pos)
+
+            intent.putExtra("cod", cursor.getInt(DatabaseHandler.COLUMN_ID.toInt()))
+            intent.putExtra("nome", cursor.getString(DatabaseHandler.COLUMN_NOME.toInt()))
+            intent.putExtra( "telefone", cursor.getString(DatabaseHandler.COLUMN_TELEFONE.toInt()))
+
+            context.startActivity(intent)
+        }
 
         return v
     }
