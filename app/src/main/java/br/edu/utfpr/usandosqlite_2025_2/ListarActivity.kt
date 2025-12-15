@@ -65,9 +65,11 @@ class ListarActivity : AppCompatActivity() {
 
     private fun initList(filtro: String = "") {
         lifecycleScope.launch {
-            val cadastro = banco.listar(filtro)
-            adapter = MeuAdapter(this@ListarActivity, cadastro)
+            val cadastros = banco.listar(filtro)
+            // O adapter será atualizado para receber uma List<Cadastro>
+            adapter = MeuAdapter(this@ListarActivity, cadastros)
             binding.lvRegistros.adapter = adapter
         }
     }
+
 }

@@ -17,44 +17,47 @@ class DatabaseHandler ()  {
         private var INSTANCE: DatabaseHandler? = null
 
         fun getInstance(): DatabaseHandler {
-            return INSTANCE ?: synchronized(this) {
-                val instance = DatabaseHandler()
-                INSTANCE = instance
-                instance
+
+            if ( INSTANCE == null ) {
+                INSTANCE = DatabaseHandler()
             }
+            return INSTANCE as DatabaseHandler
         }
+
     }
 
     suspend fun inserir(cadastro: Cadastro) {
-
-        firestore.collection(COLLECTION_NAME)
-            .document(cadastro._id.toString())
-            .set(cadastro).await()
-
+        firestore
+            .collection(COLLECTION_NAME)
+            .add(cadastro)
+            .await()
     }
 
     suspend fun alterar(cadastro: Cadastro) {
-        firestore.collection(COLLECTION_NAME)
-            .document(cadastro._id.toString())
-            .set(cadastro).await()
-    }
-
-    suspend fun excluir(id:Int) {
-        firestore.collection(COLLECTION_NAME)
-            .document(id.toString())
-            .delete().await()
-    }
-
-    suspend fun pesquisar(id:Int): Cadastro? {
-        val document =
+        cadastro._id?.let { id ->
             firestore
                 .collection(COLLECTION_NAME)
-                .document(id.toString())
-                .get()
+                .document(id )
+                .set(cadastro)
                 .await()
+        }
+    }
 
+    suspend fun excluir(id: String) {
+        firestore
+            .collection(COLLECTION_NAME)
+            .document(id)
+            .delete()
+            .await()
+    }
+
+    suspend fun pesquisar(id: String): Cadastro? {
+        val document = firestore
+            .collection(COLLECTION_NAME)
+            .document(id)
+            .get()
+            .await()
         return document.toObject(Cadastro::class.java)
-
     }
 
 
@@ -62,18 +65,20 @@ class DatabaseHandler ()  {
         return listar("")
     }
 
-    suspend fun listar(filtro: String): List<Cadastro> {
-
+    suspend fun listar(filtro: String = ""): List<Cadastro> {
         val query = firestore
             .collection(COLLECTION_NAME)
-        val snapshot = query.get().await()
 
-        val cadastro = snapshot.toObjects<Cadastro>()
+        val snapshot = query
+            .get()
+            .await()
 
-        return if ( filtro.isNotEmpty() ) {
-            cadastro.filter { it.nome.contains(filtro) }
+        val cadastros = snapshot.toObjects<Cadastro>()
+
+        return if (filtro.isNotEmpty()) {
+            cadastros.filter { it.nome.contains(filtro, ignoreCase = true) }
         } else {
-            cadastro
+            cadastros
         }
     }
 

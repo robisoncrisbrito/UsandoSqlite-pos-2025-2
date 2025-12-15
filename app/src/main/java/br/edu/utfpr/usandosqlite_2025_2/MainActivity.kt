@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        initView()
     }
 
     override fun onStart() {
@@ -47,8 +49,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        if ( intent.getIntExtra( "cod", 0 ) != 0 ) {
-            binding.etCod.setText( intent.getIntExtra( "cod", 0 ).toString() )
+        if ( intent.getStringExtra( "cod" ) != null ) {
+            binding.etCod.setText( intent.getStringExtra( "cod" ) )
             binding.etNome.setText( intent.getStringExtra( "nome" ) )
             binding.etTelefone.setText( intent.getStringExtra( "telefone" ) )
         } else {
@@ -59,17 +61,12 @@ class MainActivity : AppCompatActivity() {
 
 
     fun btSalvarOnClick(view: View) {
-
-        //validação dos campos de tela
-
-        //acesso ao banco
-
         lifecycleScope.launch {
             var msg = ""
 
-            if (binding.etCod.text.toString().isEmpty()) {
+            if (binding.etCod.text.toString().isNullOrEmpty()) {
                 val cadastro = Cadastro(
-                    binding.etCod.text.toString(),
+                    "0",
                     binding.etNome.text.toString(),
                     binding.etTelefone.text.toString()
                 )
@@ -83,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                     binding.etTelefone.text.toString()
                 )
                 banco.alterar(cadastro)
-                msg = "Alteração efetuada com Sucesso."
+                val msg = "Alteração efetuada com Sucesso."
             }
 
             //apresentação da devolutiva visual para o usuário
@@ -102,9 +99,8 @@ class MainActivity : AppCompatActivity() {
         //validação dos campos de tela
 
         //acesso ao banco
-
         lifecycleScope.launch {
-            banco.excluir(binding.etCod.text.toString().toInt())
+            banco.excluir( binding.etCod.text.toString() )
 
             //apresentação da devolutiva visual para o usuário
             Toast.makeText(
@@ -112,9 +108,8 @@ class MainActivity : AppCompatActivity() {
                 "Exclusão efetuada com Sucesso.",
                 Toast.LENGTH_SHORT
             ).show()
-
-            finish()
         }
+        finish()
     }
 
     fun btPesquisarOnClick(view: View) {
@@ -139,7 +134,7 @@ class MainActivity : AppCompatActivity() {
 
                 lifecycleScope.launch {
 
-                    val cadastro = banco.pesquisar(etCodPesquisar.text.toString().toInt())
+                    val cadastro = banco.pesquisar(etCodPesquisar.text.toString())
 
                     if (cadastro != null) {
                         binding.etCod.setText(etCodPesquisar.text.toString())

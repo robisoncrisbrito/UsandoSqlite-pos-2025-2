@@ -4,7 +4,7 @@ import com.google.firebase.firestore.DocumentId
 
 data class Cadastro(
     @DocumentId
-    val _id: String = "", // ID agora é nullable e tem valor padrão
-    val nome: String = "",   // Valor padrão adicionado
-    val telefone: String = "" // Valor padrão adicionado
+    val _id: String? = null,
+    val nome: String = "",
+    val telefone: String = ""
 )

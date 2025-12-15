@@ -21,18 +21,19 @@ class MeuAdapter(val context: Context, val registros: List<Cadastro>): BaseAdapt
     }
 
     override fun getItem(pos: Int): Any? {
+        registros.get(pos).nome
 
         val cadastro = Cadastro(
             registros.get(pos)._id,
             registros.get(pos).nome,
-            registros.get(pos).telefone
+            registros.get(pos).telefone,
         )
 
         return cadastro
     }
 
     override fun getItemId(pos: Int): Long {
-        return registros.get(pos)._id.toInt().toLong()
+        return registros.get(pos)._id?.toLong() ?: 0
     }
 
     override fun getView(
@@ -48,19 +49,17 @@ class MeuAdapter(val context: Context, val registros: List<Cadastro>): BaseAdapt
         //recupera os componentes visuais da tela
         val tvNomeElementoLista = v.findViewById<TextView>(R.id.tvNomeElementoLista)
         val tvTelefoneElementoLista = v.findViewById<TextView>(R.id.tvTelefoneElementoLista)
-        val btEditarElementoLista = v.findViewById<ImageButton>(R.id.btEditarElementoLista )
+        val btEditarElementoLista = v.findViewById<ImageButton>(R.id.btEditarElementoLista)
 
         tvNomeElementoLista.text = registros.get(pos).nome
         tvTelefoneElementoLista.text = registros.get(pos).telefone
 
         btEditarElementoLista.setOnClickListener {
             val intent = Intent(context, MainActivity::class.java)
-
-            intent.putExtra("cod", registros.get(pos)._id)
-            intent.putExtra("nome", registros.get(pos).nome)
+            intent.putExtra( "cod", registros.get(pos)._id)
+            intent.putExtra( "nome", registros.get(pos).nome)
             intent.putExtra( "telefone", registros.get(pos).telefone)
-
-            context.startActivity(intent)
+            context.startActivity( intent )
         }
 
         return v
